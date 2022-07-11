@@ -1,3 +1,8 @@
+# https://martininfts.surge.sh/
+## Get some rinkeby Eth! https://rinkebyfaucet.com/
+
+--- 
+
 # 🏗 scaffold-eth | 🏰 BuidlGuidl
 
 ## 🚩 Challenge 0: 🎟 Simple NFT Example 🤓
