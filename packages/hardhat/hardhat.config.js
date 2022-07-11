@@ -20,7 +20,7 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 */
 
 // Select the network you want to deploy to here:
-const defaultNetwork = "localhost";
+const defaultNetwork = "rinkeby";
 
 const mainnetGwei = 115;
 
@@ -28,6 +28,7 @@ function mnemonic() {
   try {
     return fs.readFileSync("./mnemonic.txt").toString().trim();
   } catch (e) {
+    // @ts-ignore
     if (defaultNetwork !== "localhost") {
       console.log(
         "☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn run generate` and then `yarn run account`."
@@ -265,6 +266,7 @@ function debug(text) {
   }
 }
 
+// @ts-ignore
 task("wallet", "Create a wallet (pk) link", async (_, { ethers }) => {
   const randomWallet = ethers.Wallet.createRandom();
   const privateKey = randomWallet._signingKey().privateKey;
@@ -272,12 +274,14 @@ task("wallet", "Create a wallet (pk) link", async (_, { ethers }) => {
   console.log("🔗 http://localhost:3000/pk#" + privateKey);
 });
 
+// @ts-ignore
 task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
   .addOptionalParam(
     "amount",
     "Amount of ETH to send to wallet after generating"
   )
   .addOptionalParam("url", "URL to add pk to")
+  // @ts-ignore
   .setAction(async (taskArgs, { network, ethers }) => {
     const randomWallet = ethers.Wallet.createRandom();
     const privateKey = randomWallet._signingKey().privateKey;
@@ -312,6 +316,7 @@ task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
         randomWallet.address +
         " using deployer account"
       );
+      // @ts-ignore
       const sendresult = await deployerWallet.sendTransaction(tx);
       console.log("\n" + url + "/pk#" + privateKey + "\n");
     } else {
@@ -327,11 +332,14 @@ task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
     }
   });
 
+// @ts-ignore
 task(
   "generate",
   "Create a mnemonic for builder deploys",
+  // @ts-ignore
   async (_, { ethers }) => {
     const bip39 = require("bip39");
+    // @ts-ignore
     const hdkey = require("ethereumjs-wallet/hdkey");
     const mnemonic = bip39.generateMnemonic();
     if (DEBUG) console.log("mnemonic", mnemonic);
@@ -362,16 +370,19 @@ task(
   }
 );
 
+// @ts-ignore
 task(
   "mineContractAddress",
   "Looks for a deployer account that will give leading zeros"
 )
   .addParam("searchFor", "String to search for")
+  // @ts-ignore
   .setAction(async (taskArgs, { network, ethers }) => {
     let contract_address = "";
     let address;
 
     const bip39 = require("bip39");
+    // @ts-ignore
     const hdkey = require("ethereumjs-wallet/hdkey");
 
     let mnemonic = "";
@@ -401,6 +412,7 @@ task(
       const input_arr = [sender, nonce];
       const rlp_encoded = rlp.encode(input_arr);
 
+      // @ts-ignore
       const contract_address_long = keccak("keccak256")
         .update(rlp_encoded)
         .digest("hex");
@@ -428,10 +440,12 @@ task(
     fs.writeFileSync("./mnemonic.txt", mnemonic.toString());
   });
 
+// @ts-ignore
 task(
   "account",
   "Get balance informations for the deployment account.",
   async (_, { ethers }) => {
+    // @ts-ignore
     const hdkey = require("ethereumjs-wallet/hdkey");
     const bip39 = require("bip39");
     const mnemonic = fs.readFileSync("./mnemonic.txt").toString().trim();
@@ -453,10 +467,12 @@ task(
     const qrcode = require("qrcode-terminal");
     qrcode.generate(address);
     console.log("‍📬 Deployer Account is " + address);
+    // @ts-ignore
     for (const n in config.networks) {
       // console.log(config.networks[n],n)
       try {
         const provider = new ethers.providers.JsonRpcProvider(
+          // @ts-ignore
           config.networks[n].url
         );
         const balance = await provider.getBalance(address);
@@ -485,16 +501,19 @@ async function addr(ethers, addr) {
   throw `Could not normalize address: ${addr}`;
 }
 
+// @ts-ignore
 task("accounts", "Prints the list of accounts", async (_, { ethers }) => {
   const accounts = await ethers.provider.listAccounts();
   accounts.forEach((account) => console.log(account));
 });
 
+// @ts-ignore
 task("blockNumber", "Prints the block number", async (_, { ethers }) => {
   const blockNumber = await ethers.provider.getBlockNumber();
   console.log(blockNumber);
 });
 
+// @ts-ignore
 task("balance", "Prints an account's balance")
   .addPositionalParam("account", "The account's address")
   .setAction(async (taskArgs, { ethers }) => {
@@ -514,6 +533,7 @@ function send(signer, txparams) {
   });
 }
 
+// @ts-ignore
 task("send", "Send ETH")
   .addParam("from", "From address or account index")
   .addOptionalParam("to", "To address or account index")
@@ -553,6 +573,7 @@ task("send", "Send ETH")
       txRequest.data = taskArgs.data;
       debug(`Adding data to payload: ${txRequest.data}`);
     }
+    // @ts-ignore
     debug(txRequest.gasPrice / 1000000000 + " gwei");
     debug(JSON.stringify(txRequest, null, 2));
 

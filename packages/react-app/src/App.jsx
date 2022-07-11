@@ -29,8 +29,11 @@ import { Transactor } from "./helpers";
 import { useContractConfig } from "./hooks";
 // import Hints from "./Hints";
 
+// @ts-ignore
 const { BufferList } = require("bl");
+// @ts-ignore
 const ipfsAPI = require("ipfs-http-client");
+// @ts-ignore
 const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
 
 const { ethers } = require("ethers");
@@ -55,7 +58,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -201,7 +204,9 @@ function App(props) {
 
   const logoutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
+    // @ts-ignore
     if (injectedProvider && injectedProvider.provider && typeof injectedProvider.provider.disconnect == "function") {
+      // @ts-ignore
       await injectedProvider.provider.disconnect();
     }
     setTimeout(() => {
@@ -222,6 +227,7 @@ function App(props) {
     async function getAddress() {
       if (userSigner) {
         const newAddress = await userSigner.getAddress();
+        // @ts-ignore
         setAddress(newAddress);
       }
     }
@@ -231,6 +237,7 @@ function App(props) {
   // You can warn the user if you would like them to be on a specific network
   const localChainId = localProvider && localProvider._network && localProvider._network.chainId;
   const selectedChainId =
+    // @ts-ignore
     userSigner && userSigner.provider && userSigner.provider._network && userSigner.provider._network.chainId;
 
   // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
@@ -311,6 +318,7 @@ function App(props) {
           console.log(e);
         }
       }
+      // @ts-ignore
       setYourCollectibles(collectibleUpdate);
     };
     updateYourCollectibles();
@@ -364,6 +372,7 @@ function App(props) {
     const networkSelected = NETWORK(selectedChainId);
     const networkLocal = NETWORK(localChainId);
     if (selectedChainId === 1337 && localChainId === 31337) {
+      // @ts-ignore
       networkDisplay = (
         <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
           <Alert
@@ -381,6 +390,7 @@ function App(props) {
         </div>
       );
     } else {
+      // @ts-ignore
       networkDisplay = (
         <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
           <Alert
@@ -437,6 +447,7 @@ function App(props) {
       );
     }
   } else {
+    // @ts-ignore
     networkDisplay = (
       <div style={{ zIndex: -1, position: "absolute", right: 154, top: 28, padding: 16, color: targetNetwork.color }}>
         {targetNetwork.name}
@@ -446,15 +457,18 @@ function App(props) {
 
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.connect();
+    // @ts-ignore
     setInjectedProvider(new ethers.providers.Web3Provider(provider));
 
     provider.on("chainChanged", chainId => {
       console.log(`chain changed to ${chainId}! updating providers`);
+      // @ts-ignore
       setInjectedProvider(new ethers.providers.Web3Provider(provider));
     });
 
     provider.on("accountsChanged", () => {
       console.log(`account changed!`);
+      // @ts-ignore
       setInjectedProvider(new ethers.providers.Web3Provider(provider));
     });
 
@@ -473,6 +487,7 @@ function App(props) {
 
   const [route, setRoute] = useState();
   useEffect(() => {
+    // @ts-ignore
     setRoute(window.location.pathname);
   }, [setRoute]);
 
@@ -486,8 +501,10 @@ function App(props) {
     localProvider._network &&
     localProvider._network.chainId == 31337 &&
     yourLocalBalance &&
+    // @ts-ignore
     ethers.utils.formatEther(yourLocalBalance) <= 0
   ) {
+    // @ts-ignore
     faucetHint = (
       <div style={{ padding: 16 }}>
         <Button
@@ -510,9 +527,11 @@ function App(props) {
   const [sending, setSending] = useState();
   const [ipfsHash, setIpfsHash] = useState();
   const [ipfsDownHash, setIpfsDownHash] = useState();
+  // @ts-ignore
   const [downloading, setDownloading] = useState();
   const [ipfsContent, setIpfsContent] = useState();
   const [transferToAddresses, setTransferToAddresses] = useState({});
+  // @ts-ignore
   const [minting, setMinting] = useState(false);
   const [count, setCount] = useState(1);
 
@@ -645,6 +664,7 @@ function App(props) {
     const uploaded = await ipfs.add(JSON.stringify(json[count]));
     setCount(count + 1);
     console.log("Uploaded Hash: ", uploaded);
+    // @ts-ignore
     const result = tx(
       writeContracts &&
         writeContracts.YourCollectible &&
@@ -677,6 +697,7 @@ function App(props) {
           <Menu.Item key="/">
             <Link
               onClick={() => {
+                // @ts-ignore
                 setRoute("/");
               }}
               to="/"
@@ -687,6 +708,7 @@ function App(props) {
           <Menu.Item key="/transfers">
             <Link
               onClick={() => {
+                // @ts-ignore
                 setRoute("/transfers");
               }}
               to="/transfers"
@@ -697,6 +719,7 @@ function App(props) {
           <Menu.Item key="/ipfsup">
             <Link
               onClick={() => {
+                // @ts-ignore
                 setRoute("/ipfsup");
               }}
               to="/ipfsup"
@@ -707,6 +730,7 @@ function App(props) {
           <Menu.Item key="/ipfsdown">
             <Link
               onClick={() => {
+                // @ts-ignore
                 setRoute("/ipfsdown");
               }}
               to="/ipfsdown"
@@ -717,6 +741,7 @@ function App(props) {
           <Menu.Item key="/debugcontracts">
             <Link
               onClick={() => {
+                // @ts-ignore
                 setRoute("/debugcontracts");
               }}
               to="/debugcontracts"
@@ -814,17 +839,22 @@ function App(props) {
 
           <Route path="/ipfsup">
             <div style={{ paddingTop: 32, width: 740, margin: "auto", textAlign: "left" }}>
-              <ReactJson
+              <
+// @ts-ignore
+              ReactJson
                 style={{ padding: 8 }}
                 src={yourJSON}
                 theme="pop"
                 enableClipboard={false}
+                // @ts-ignore
                 onEdit={(edit, a) => {
                   setYourJSON(edit.updated_src);
                 }}
+                // @ts-ignore
                 onAdd={(add, a) => {
                   setYourJSON(add.updated_src);
                 }}
+                // @ts-ignore
                 onDelete={(del, a) => {
                   setYourJSON(del.updated_src);
                 }}
@@ -839,12 +869,15 @@ function App(props) {
               type="primary"
               onClick={async () => {
                 console.log("UPLOADING...", yourJSON);
+                // @ts-ignore
                 setSending(true);
+                // @ts-ignore
                 setIpfsHash();
                 const result = await ipfs.add(JSON.stringify(yourJSON)); // addToIPFS(JSON.stringify(yourJSON))
                 if (result && result.path) {
                   setIpfsHash(result.path);
                 }
+                // @ts-ignore
                 setSending(false);
                 console.log("RESULT:", result);
               }}
@@ -858,8 +891,10 @@ function App(props) {
             <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
               <Input
                 value={ipfsDownHash}
+                // @ts-ignore
                 placeHolder="IPFS hash (like QmadqNw8zkdrrwdtPFK1pLi8PPxmkQ4pDJXY8ozHtz6tZq)"
                 onChange={e => {
+                  // @ts-ignore
                   setIpfsDownHash(e.target.value);
                 }}
               />
@@ -872,12 +907,15 @@ function App(props) {
               type="primary"
               onClick={async () => {
                 console.log("DOWNLOADING...", ipfsDownHash);
+                // @ts-ignore
                 setDownloading(true);
+                // @ts-ignore
                 setIpfsContent();
                 const result = await getFromIPFS(ipfsDownHash); // addToIPFS(JSON.stringify(yourJSON))
                 if (result && result.toString) {
                   setIpfsContent(result.toString());
                 }
+                // @ts-ignore
                 setDownloading(false);
               }}
             >
@@ -891,6 +929,7 @@ function App(props) {
               name="YourCollectible"
               signer={userSigner}
               provider={localProvider}
+              // @ts-ignore
               address={address}
               blockExplorer={blockExplorer}
               contractConfig={contractConfig}
@@ -903,7 +942,9 @@ function App(props) {
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-        <Account
+        <
+// @ts-ignore
+        Account
           address={address}
           localProvider={localProvider}
           userSigner={userSigner}
